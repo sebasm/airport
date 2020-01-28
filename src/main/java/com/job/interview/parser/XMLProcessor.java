@@ -11,6 +11,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import com.job.interview.entity.Flight;
+import com.job.interview.exception.FormatException;
 
 public class XMLProcessor implements FormatsProcessor {
 
@@ -27,7 +28,7 @@ public class XMLProcessor implements FormatsProcessor {
 		    response = (Flights) jaxbUnmarshaller.unmarshal( new ByteArrayInputStream(file));
 		     
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			throw new FormatException("Error reading file", e);
 		}
 
 		return response.getFlights();
@@ -51,7 +52,7 @@ public class XMLProcessor implements FormatsProcessor {
 		    jaxbMarshaller.marshal(flightsObj, writer);
 	     
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			throw new FormatException("Error reading file", e);
 		}
 	    return writer.toString().getBytes();
 	}

@@ -1,0 +1,5 @@
+airline,flight_number,type,time,terminal,gate
+AA,AA6387,Arrival,2020-01-28T15:30,A,3
+DL,DL1472,Arrival,2020-01-29T18:10,A,2
+AA,AA6387,Departure,2020-01-30T15:30,A,3
+DL,DL1472,Departure,2020-01-31T18:10,A,2

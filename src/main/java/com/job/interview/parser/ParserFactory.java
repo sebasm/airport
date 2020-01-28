@@ -2,6 +2,8 @@ package com.job.interview.parser;
 
 import org.springframework.stereotype.Component;
 
+import com.job.interview.exception.FormatException;
+
 @Component
 public class ParserFactory {
 	
@@ -17,7 +19,7 @@ public class ParserFactory {
 			return new XMLProcessor();
 		}
 		else {
-			return null;
+			throw new FormatException("Error getting parser");
 		}
 		
 	}

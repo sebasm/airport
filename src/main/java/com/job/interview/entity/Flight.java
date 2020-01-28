@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
 
@@ -35,10 +36,11 @@ public class Flight {
 
 	@CsvBindByName(column = "time")
 	@CsvDate(value = "yyyy-MM-dd'T'hh:mm")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'hh:mm")
 	private Date time;
 
 	@CsvBindByName(column = "terminal")
-	private Character terminal;
+	private String terminal;
 
 	@CsvBindByName(column = "gate")
 	private Integer gate;
@@ -84,11 +86,11 @@ public class Flight {
 		this.time = time;
 	}
 
-	public Character getTerminal() {
+	public String getTerminal() {
 		return terminal;
 	}
 
-	public void setTerminal(Character terminal) {
+	public void setTerminal(String terminal) {
 		this.terminal = terminal;
 	}
 

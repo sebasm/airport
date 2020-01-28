@@ -6,8 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,8 +18,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.job.interview.FormatException;
 import com.job.interview.entity.Flight;
+import com.job.interview.exception.FormatException;
 import com.job.interview.service.FlightService;
 
 @RestController
@@ -36,13 +38,13 @@ public class FlightController {
 		
 		if(matcher.matches()) {
 			try {
-				List<Flight> flights = flightService.convertToFlights(file.getBytes(), file.getOriginalFilename().substring(file.getOriginalFilename().length()-3));
+				List<Flight> flights = flightService.convertToFlights(
+						file.getBytes(), 
+						file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1));
 				flightService.registerFlights(flights);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("");
-			
 		}else {
 			throw new FormatException("Format not allowed, file must be CSV, XML or JSON");
 		}
@@ -51,10 +53,15 @@ public class FlightController {
 	}
 	
 	@RequestMapping(value = "/flights", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	public @ResponseBody byte[] getFlights(@RequestParam(name = "format", required = false, defaultValue = "CSV") String format) {
+	public ResponseEntity<byte[]> getFlights(@RequestParam(name = "format", required = false, defaultValue = "CSV") String format) {
+		
 		List<Flight> flights = flightService.getFlights();
-		byte [] response = flightService.convertFlights(flights, format);
-		return response;
+		byte [] file = flightService.convertFlights(flights, format);
+		
+		HttpHeaders header = new HttpHeaders();
+        header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=flights." + format);
+        
+        return new ResponseEntity<byte[]>(file, header, HttpStatus.OK);
 	}
 
 }
